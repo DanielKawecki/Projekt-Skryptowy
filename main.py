@@ -1,4 +1,5 @@
 import pieces
+import draw_piece
 
 # Inicjalizacja biblioteki
 import pygame
@@ -16,30 +17,40 @@ window = pygame.display.set_mode([window_width, window_height])
 pygame.display.set_caption("Carcassonne")
 
 # Siatka planszy
-grid_height = 9
-grid_width = 13
+grid_height = 21
+grid_width = 21
 
-grid = [[pieces.empty_grid(i*100+70, j*100, i, j) for j in range(grid_height)] for i in range(grid_width)]
+# Przesunięcie planszy
+offset = [0, 0]
+
+grid = [[pieces.empty_grid((i*100), (j*100), i, j) for j in range(grid_height)] for i in range(grid_width)]
 
 # Element początkowy
-grid[6][4] = pieces.straight_road_castle(670, 400, 6, 4)
-grid[5][3] = pieces.road_turn(570, 300, 5, 3)
+src = pygame.image.load("textures/straight_road_castle.png")
+src = pygame.transform.smoothscale(src, [100, 100])
+grid[2][2] = pieces.piece_template(1, 2, 3, 2, False, False, src, False, False, 200, 200, 2, 2)
 
 # Pierwszy losowy element
-new_piece = pieces.road_turn(0, 0, 0, 0)
+current = 0
+new_piece = draw_piece.list_of_elements[current]
 new_piece.placed = False
+current = 1
+
+# sum_of_elements = len(draw_piece.list_of_elements)-current
 
 def drawNewPiece():
     global new_piece
-    new_piece = pieces.straight_road(0, 0, 0, 0)
+    global current
+    new_piece = draw_piece.list_of_elements[current]
+    current += 1
     global game_phase 
     game_phase = "own"
 
 def place():
     new_piece.placed = True
     new_piece.red = False
-    new_piece.x = new_piece.grid_x*100+70
-    new_piece.y = new_piece.grid_y*100
+    new_piece.x = new_piece.grid_x*100 + offset[0]
+    new_piece.y = new_piece.grid_y*100 + offset[1]
 
     # Umieszczenie elementu na planszy
     grid[new_piece.grid_x][new_piece.grid_y] = new_piece
@@ -117,6 +128,35 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_e:
                 new_piece.rotate("right")
+
+        # Przesuwanie planszy
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_w:
+                for i in range(20):
+                    for j in range(20):
+                        grid[i][j].y -= 100
+                offset[1] -= 100
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_s:
+                for i in range(20):
+                    for j in range(20):
+                        grid[i][j].y += 100
+                offset[1] += 100
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_a:
+                for i in range(20):
+                    for j in range(20):
+                        grid[i][j].x -= 100
+                offset[0] -= 100
+                    
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_d:
+                for i in range(20):
+                    for j in range(20):
+                        grid[i][j].x += 100
+                offset[0] += 100
 
         # Lewy przycisk myszy
         if event.type == pygame.MOUSEBUTTONUP:
