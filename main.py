@@ -1,5 +1,7 @@
 import pieces
 import draw_piece
+import text_and_font
+import players
 
 # Inicjalizacja biblioteki
 import pygame
@@ -22,6 +24,15 @@ grid_width = 21
 
 # Przesunięcie planszy
 offset = [0, 0]
+
+
+
+
+player1 = players.player('Daniel', 'red', 20)
+player2 = players.player('Agata', 'red', 80)
+
+
+
 
 grid = [[pieces.empty_grid((i*100), (j*100), i, j) for j in range(grid_height)] for i in range(grid_width)]
 
@@ -88,6 +99,9 @@ def redraw():
             
             pieceValidation(i, j)
 
+    player1.draw(window)
+    player2.draw(window)
+    
     if new_piece:
         new_piece.draw(window)
 
