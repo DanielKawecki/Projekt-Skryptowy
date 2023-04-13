@@ -4,6 +4,9 @@ import pygame
 red_overall = pygame.image.load("textures/red_overall.png")
 green_overall = pygame.image.load("textures/green_overall.png")
 
+pygame.font.init()
+font1 = pygame.font.SysFont('Arial', 15)
+
 class empty_grid:
     def __init__(self, x, y, grid_x, grid_y):
         
@@ -24,6 +27,9 @@ class empty_grid:
         self.width = self.height = 100
         self.color = [255, 255, 255]      
 
+        self.string = "x: "+str(self.grid_x)+", y: "+str(self.grid_y)
+        self.text_name = font1.render(self.string, True, (0, 0, 0))
+
     def hover(self, mx, my):
         if self.x <= mx < (self.x + self.width) and self.y <= my < (self.y + self.height):
             self.color = [200, 200, 200]
@@ -32,6 +38,34 @@ class empty_grid:
             self.color = [255, 255, 255]
 
         return False
+
+    def draw(self, window):
+        pygame.draw.rect(window, self.color, pygame.Rect(self.x, self.y, self.width, self.height))
+        window.blit(self.text_name, (self.x+10, self.y+10))
+        
+
+class edge_grid:
+    def __init__(self, x, y, grid_x, grid_y):
+        
+        # Pozycja
+        self.x = x
+        self.y = y
+
+         # Krawędzie
+        self.top = 9
+        self.right = 9
+        self.bottom = 9
+        self.left = 9  
+
+        self.grid_x = grid_x
+        self.grid_y = grid_y
+
+        # Właściwości
+        self.width = self.height = 100
+        self.color = [200, 200, 200]    
+
+    def hover(self, mx, my):
+        pass
 
     def draw(self, window):
         pygame.draw.rect(window, self.color, pygame.Rect(self.x, self.y, self.width, self.height))
