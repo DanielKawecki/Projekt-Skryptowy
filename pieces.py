@@ -23,9 +23,12 @@ class empty_grid:
         self.grid_x = grid_x
         self.grid_y = grid_y
 
+        self.actual_piece = False
+
         # Właściwości
-        self.width = self.height = 100
-        self.color = [255, 255, 255]      
+        self.width = self.height = 99
+        # self.color = [255, 255, 255]     
+        self.color = [199, 251, 113]  
 
         self.string = "x: "+str(self.grid_x)+", y: "+str(self.grid_y)
         self.text_name = font1.render(self.string, True, (0, 0, 0))
@@ -35,13 +38,13 @@ class empty_grid:
             self.color = [200, 200, 200]
             return True
         else:
-            self.color = [255, 255, 255]
+            self.color = [255, 255, 255]  
 
         return False
 
     def draw(self, window):
         pygame.draw.rect(window, self.color, pygame.Rect(self.x, self.y, self.width, self.height))
-        window.blit(self.text_name, (self.x+10, self.y+10))
+        # window.blit(self.text_name, (self.x+10, self.y+10))
         
 
 class edge_grid:
@@ -63,6 +66,8 @@ class edge_grid:
         # Właściwości
         self.width = self.height = 100
         self.color = [200, 200, 200]    
+
+        self.actual_piece = False
 
     def hover(self, mx, my):
         pass
@@ -97,6 +102,10 @@ class pieces:
         self.red = True
         self.correct = False
         return False
+    
+    def own(self, name, color):
+        self.monastery_owner = name
+        self.owner_color = color
 
     def draw(self, window):
         window.blit(self.texture, (self.x, self.y))
@@ -104,6 +113,9 @@ class pieces:
             window.blit(red_overall, (self.x, self.y))
         elif self.correct == True and self.placed == False:
             window.blit(green_overall, (self.x, self.y))
+        elif self.monastery_owner != 9:
+            pygame.draw.rect(window, (0, 0, 0), pygame.Rect(self.x + 40, self.y + 40, 20, 20))
+            pygame.draw.rect(window, self.owner_color, pygame.Rect(self.x + 42, self.y + 42, 16, 16))
 
 class piece_template(pieces):
     def __init__(self, top, right, bottom, left, intersect, separate, texture, bonus = False, monastery = False, x = 0, y = 0, grid_x = 0, grid_y = 0):
@@ -127,10 +139,12 @@ class piece_template(pieces):
         self.left = left
 
         # Kto jest właścicelem
-        self.field_owner = "none"
-        self.road_owner = "none"
-        self.castle_owner = "none"
-        self.monastry_owner = "none"
+        self.field_owner = 9
+        self.road_owner = 9
+        self.castle_owner = 9
+        self.monastery_owner = 9
+
+        self.owner_color = (0, 0, 0)
 
         # Zakończenie drogi
         self.intersection = intersect
@@ -144,6 +158,8 @@ class piece_template(pieces):
         self.red = False
         self.placed = False
         self.correct = False
+
+        self.actual_piece = True
 
         # Bonusowe punkty
         self.bonus = bonus

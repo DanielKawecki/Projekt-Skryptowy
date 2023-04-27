@@ -4,6 +4,9 @@ import pygame
 red_overall = pygame.image.load("textures/red_overall.png")
 green_overall = pygame.image.load("textures/green_overall.png")
 
+player_board = pygame.image.load("textures/player_board.png")
+player_board = pygame.transform.smoothscale_by(player_board, 0.35)
+
 texture_rt = pygame.image.load("textures/road_turn.png")
 texture_sr = pygame.image.load("textures/straight_road.png")
 texture_tr = pygame.image.load("textures/three_roads.png")

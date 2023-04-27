@@ -1,7 +1,8 @@
 import pieces
 import draw_piece
-import text_and_font
+from text_and_font import *
 import players
+import textures
 
 # Inicjalizacja biblioteki
 import pygame
@@ -23,9 +24,9 @@ grid_height = 22
 grid_width = 22
 
 # Przesunięcie planszy
-offset = [0, 0]
+offset = [-330, -600]
 
-grid = [[pieces.empty_grid((i*100), (j*100), i, j) for j in range(grid_height-1)] for i in range(grid_width-1)]
+grid = [[pieces.empty_grid((i*100)-330, (j*100)-600, i, j) for j in range(grid_height-1)] for i in range(grid_width-1)]
 
 grid.append([pieces.edge_grid((i*100), 2100, i, 21)for i in range(grid_width)])
 
@@ -35,7 +36,7 @@ for i in range(22):
 # Element początkowy
 src = pygame.image.load("textures/straight_road_castle.png")
 src = pygame.transform.smoothscale(src, [100, 100])
-grid[10][10] = pieces.piece_template(1, 2, 3, 2, False, False, src, False, False, 1000, 1000, 2, 2)
+grid[10][10] = pieces.piece_template(1, 2, 3, 2, False, False, src, False, False, (window_width/2)-50, (window_height/2)-50, 2, 2)
 
 # Pierwszy losowy element
 current = 0
@@ -43,7 +44,19 @@ new_piece = draw_piece.list_of_elements[current]
 new_piece.placed = False
 current = 1
 
-# sum_of_elements = len(draw_piece.list_of_elements)-current
+# Gracze
+all_players = []
+all_players.append(players.player("Player 1", (255, 0, 0), 10))
+all_players.append(players.player("Player 2", (0, 255, 0), 100))
+
+player_board = textures.player_board
+
+current_player = 0
+
+# Pole wyboru
+monastery = button("Monastery", 400, 430, 30, (255, 255, 255))
+pass_bt = pass_button(600, 430, 30, (255, 255, 255))
+cancel = cancel_button(800, 430, 30, (255, 255, 255))
 
 def drawNewPiece():
     global new_piece
@@ -62,13 +75,44 @@ def place():
     # Umieszczenie elementu na planszy
     grid[new_piece.grid_x][new_piece.grid_y] = new_piece
 
-    # Zmiana fazy gry
-    global game_phase 
-    game_phase = "draw"
-
 def ownElement():
-    pass
+    mouse = pygame.mouse.get_pos() 
 
+    global new_piece
+    global all_players
+
+    if monastery.click(mouse) and all_players[current_player].warriors > 0:
+        new_piece.own(current_player, all_players[current_player].color)
+        all_players[current_player].warriors -= 1
+        return True
+    
+    elif pass_bt.click(mouse):
+        return True
+    
+    elif cancel.click(mouse):
+        global game_phase
+        game_phase = "draw"
+        return False
+    
+    else:
+        return False
+
+def scan_for_points():
+    global grid
+    global all_players
+    for i in range(grid_width):
+        for j in range(grid_height):
+            if grid[i][j].actual_piece == True and grid[i][j].monastery == True and grid[i][j].monastery_owner != 9:
+                counter = 0
+                neighbours = [grid[i-1][j-1], grid[i][j-1], grid[i+1][j-1], grid[i-1][j], grid[i+1][j], grid[i-1][j+1], grid[i][j+1], grid[i+1][j+1]]
+                for element in neighbours:
+                    if isinstance(element, pieces.piece_template):
+                        counter += 1
+                if counter == 8:
+                    all_players[grid[i][j].monastery_owner].warriors += 1
+                    all_players[grid[i][j].monastery_owner].points += 9
+                    grid[i][j].monastery_owner = 9
+    
 def pieceValidation(i, j):
     # Pozycja kursora
     mouse = pygame.mouse.get_pos() 
@@ -80,7 +124,12 @@ def pieceValidation(i, j):
     new_piece.x, new_piece.y = mouse[0]-50, mouse[1]-50
 
     new_piece.checkNeighbors(grid)
-    
+
+# Funkcja rysująca graczy
+def draw_players():
+    for i in range(len(all_players)):
+        all_players[i].draw(window)
+
 # Funkcja rysująca w fazie układania
 def redraw():
     
@@ -94,6 +143,13 @@ def redraw():
             grid[i][j].draw(window)
             
             pieceValidation(i, j)
+
+    pygame.draw.rect(window, (76, 227, 253), (0, 0, 150, 200))
+    pygame.draw.rect(window, (255, 255, 255), (10, 10, 120, 35))
+    pygame.draw.rect(window, (255, 255, 255), (10, 100, 120, 35))
+    draw_players()
+
+    text(str(current_player), 800, 800).draw(window)
     
     if new_piece:
         new_piece.draw(window)
@@ -111,6 +167,14 @@ def basicRedraw():
 
             # Rysowanie
             grid[i][j].draw(window)
+
+    draw_players()
+
+    if new_piece.monastery == True:
+        monastery.draw(window)
+
+    pass_bt.draw(window)
+    cancel.draw(window)
         
     # Zmiana klatek
     pygame.display.flip()
@@ -166,13 +230,27 @@ while running:
                 offset[0] -= 100
 
         # Lewy przycisk myszy
-        if event.type == pygame.MOUSEBUTTONUP:
+        if event.type == pygame.MOUSEBUTTONUP and game_phase in ("start", "draw"):
             if event.button == pygame.BUTTON_LEFT and new_piece.correct == True:
+                game_phase = "own"
+                # ownElement()
+        elif event.type == pygame.MOUSEBUTTONUP and game_phase == "own":
+            if ownElement():
                 place()
+                drawNewPiece()
+                if current_player+1 > len(all_players)-1:
+                    current_player = 0
+                else:
+                    current_player += 1
+                game_phase = "draw"
+                scan_for_points()
 
     if game_phase == "draw":
+        redraw()
+        
+    elif game_phase == "own":
         basicRedraw()
-        drawNewPiece()
+
     else:
         redraw()
 
