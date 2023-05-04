@@ -144,12 +144,12 @@ def redraw():
             
             pieceValidation(i, j)
 
-    pygame.draw.rect(window, (76, 227, 253), (0, 0, 150, 200))
-    pygame.draw.rect(window, (255, 255, 255), (10, 10, 120, 35))
-    pygame.draw.rect(window, (255, 255, 255), (10, 100, 120, 35))
+    # pygame.draw.rect(window, (76, 227, 253), (0, 0, 150, 200))
+    pygame.draw.rect(window, (0, 0, 0), (0, 0, 155, 205))
+    pygame.draw.rect(window, (200, 255, 255), (0, 0, 150, 200))
     draw_players()
 
-    text(str(current_player), 800, 800).draw(window)
+    # text(str(current_player), 800, 800).draw(window)
     
     if new_piece:
         new_piece.draw(window)
@@ -168,6 +168,8 @@ def basicRedraw():
             # Rysowanie
             grid[i][j].draw(window)
 
+    pygame.draw.rect(window, (0, 0, 0), (0, 0, 155, 205))
+    pygame.draw.rect(window, (200, 255, 255), (0, 0, 150, 200))
     draw_players()
 
     if new_piece.monastery == True:
