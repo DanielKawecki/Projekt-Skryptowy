@@ -11,12 +11,12 @@ for i in range(8):
     list_of_elements.append(pieces.piece_template(2, 3, 2, 3, False, False, texture_sr))
 
 for i in range(4):
-    list_of_elements.append(pieces.piece_template(2, 2, 2, 3, True, False, texture_tr))
+    list_of_elements.append(pieces.piece_template(2, 2, 2, 3, True, False, texture_tr, False, False, 0, 0, 0, 0, 3))
 
-list_of_elements.append(pieces.piece_template(2, 2, 2, 2, True, False, texture_fr))
+list_of_elements.append(pieces.piece_template(2, 2, 2, 2, True, False, texture_fr, False, False, 0, 0, 0, 0, 4))
 
 for i in range(4):
-    list_of_elements.append(pieces.piece_template(1, 2, 3, 2, True, False, texture_src))
+    list_of_elements.append(pieces.piece_template(1, 2, 3, 2, False, False, texture_src))
 
 for i in range(3):
     list_of_elements.append(pieces.piece_template(1, 2, 2, 2, True, False, texture_trc))
@@ -61,13 +61,13 @@ for i in range(1):
     list_of_elements.append(pieces.piece_template(1, 1, 2, 1, True, False, texture_ccr))
 
 for i in range(1):
-    list_of_elements.append(pieces.piece_template(1, 1, 3, 1, True, False, texture_ccfb, True))
+    list_of_elements.append(pieces.piece_template(1, 1, 3, 1, False, False, texture_ccfb, True))
 
 for i in range(3):
-    list_of_elements.append(pieces.piece_template(1, 1, 3, 1, True, False, texture_ccf))
+    list_of_elements.append(pieces.piece_template(1, 1, 3, 1, False, False, texture_ccf))
 
 for i in range(1):
-    list_of_elements.append(pieces.piece_template(1, 1, 1, 1, True, False, texture_cc, True))
+    list_of_elements.append(pieces.piece_template(1, 1, 1, 1, False, False, texture_cc, True))
 
 for i in range(4):
     list_of_elements.append(pieces.piece_template(3, 3, 3, 3, False, False, texture_m, False, True))

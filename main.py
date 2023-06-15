@@ -58,6 +58,12 @@ monastery = button("Monastery", 400, 430, 30, (255, 255, 255))
 pass_bt = pass_button(600, 430, 30, (255, 255, 255))
 cancel = cancel_button(800, 430, 30, (255, 255, 255))
 
+scored_pieces = []
+top_used = []
+right_used = []
+bottom_used = []
+left_used = []
+
 def drawNewPiece():
     global new_piece
     global current
@@ -97,9 +103,64 @@ def ownElement():
     else:
         return False
 
+def recursion_for_roads(grid, points, i, j, exclude):
+    global scored_pieces
+    global top_used
+    global right_used
+    global bottom_used
+    global left_used
+    
+    if grid[i][j].top == 2 and [i, j-1] != exclude and ([i, j] not in top_used):
+        if isinstance(grid[i][j-1], pieces.piece_template):
+            if grid[i][j-1].intersection == False:
+                if grid[i][j].roads_available >= 3:
+                    top_used.append([i, j])
+                else:
+                    scored_pieces.append([i, j])
+
+                return recursion_for_roads(grid, (points+1), i, j-1, [i, j])
+            else:
+                return points+1
+        else:
+            return 0
+        
+    if grid[i][j].right == 2 and [i+1, j] != exclude:
+        if isinstance(grid[i+1][j], pieces.piece_template):
+            if grid[i+1][j].intersection == False:
+                scored_pieces.append([i, j])
+                return recursion_for_roads(grid, (points+1), i+1, j, [i, j])
+            else:
+                return points+1
+        else:
+            return 0
+
+    if grid[i][j].left == 2 and [i-1, j] != exclude:
+        if isinstance(grid[i-1][j], pieces.piece_template):
+            if grid[i-1][j].intersection == False:
+                scored_pieces.append([i, j])
+                return recursion_for_roads(grid, (points+1), i-1, j, [i, j])
+            else:
+                return points+1
+        else:
+            return 0
+
+    if grid[i][j].bottom == 2 and [i, j+1] != exclude:
+        if isinstance(grid[i][j+1], pieces.piece_template):
+            if grid[i][j+1].intersection == False:
+                scored_pieces.append([i, j])
+                return recursion_for_roads(grid, (points+1), i, j+1, [i, j])
+            else:
+                return points+1
+        else:
+            return 0
+        
+    else:
+        return 0
+
 def scan_for_points():
     global grid
     global all_players
+    global scored_pieces
     for i in range(grid_width):
         for j in range(grid_height):
             if grid[i][j].actual_piece == True and grid[i][j].monastery == True and grid[i][j].monastery_owner != 9:
@@ -112,6 +173,10 @@ def scan_for_points():
                     all_players[grid[i][j].monastery_owner].warriors += 1
                     all_players[grid[i][j].monastery_owner].points += 9
                     grid[i][j].monastery_owner = 9
+
+            if [i, j] not in scored_pieces and grid[i][j].actual_piece == True and grid[i][j].intersection == True: # and grid[i][j].road_owner != 9:
+                all_players[1].points += (recursion_for_roads(grid, 1, i, j, [i, j]))
+                        
     
 def pieceValidation(i, j):
     # Pozycja kursora

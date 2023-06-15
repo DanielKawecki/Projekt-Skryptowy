@@ -14,7 +14,7 @@ class empty_grid:
         self.x = x
         self.y = y
 
-         # Krawędzie
+        # Krawędzie
         self.top = 9
         self.right = 9
         self.bottom = 9
@@ -116,9 +116,12 @@ class pieces:
         elif self.monastery_owner != 9:
             pygame.draw.rect(window, (0, 0, 0), pygame.Rect(self.x + 40, self.y + 40, 20, 20))
             pygame.draw.rect(window, self.owner_color, pygame.Rect(self.x + 42, self.y + 42, 16, 16))
+        elif self.road_owner != 9:
+            pygame.draw.rect(window, (0, 0, 0), pygame.Rect(self.x + 40, self.y + 40, 20, 20))
+            pygame.draw.rect(window, self.owner_color, pygame.Rect(self.x + 42, self.y + 42, 16, 16))
 
 class piece_template(pieces):
-    def __init__(self, top, right, bottom, left, intersect, separate, texture, bonus = False, monastery = False, x = 0, y = 0, grid_x = 0, grid_y = 0):
+    def __init__(self, top, right, bottom, left, intersect, separate, texture, bonus = False, monastery = False, x = 0, y = 0, grid_x = 0, grid_y = 0, roads_available = 0):
     
         # Pozycja
         self.x = x
@@ -148,6 +151,7 @@ class piece_template(pieces):
 
         # Zakończenie drogi
         self.intersection = intersect
+        self.roads_available = roads_available
 
         # Rozdzielność zamków
         self.separate = separate
